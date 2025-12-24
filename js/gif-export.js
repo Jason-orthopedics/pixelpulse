@@ -213,3 +213,4 @@ class GifExporter {
 // 导出到全局
 window.GifExporter = GifExporter;
 
+

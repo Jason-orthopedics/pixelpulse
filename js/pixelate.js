@@ -240,3 +240,4 @@ class PixelateEngine {
 // 导出到全局
 window.PixelateEngine = PixelateEngine;
 
+
