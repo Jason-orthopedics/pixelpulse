@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPulse 像素脉动 - 动态像素艺术生成器</title>
+    
+    <!-- 像素字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- 样式表 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 扫描线效果层 -->
+    <div class="scanlines"></div>
+    
+    <!-- 星空背景 -->
+    <div class="starfield" id="starfield"></div>
+    
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1 class="title">
+                <span class="title-pixel">PIXEL</span>
+                <span class="title-pulse">PULSE</span>
+            </h1>
+            <p class="subtitle">像素脉动 - 让你的图片动起来</p>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 上传区域 -->
+            <section class="upload-section pixel-border">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <span class="pixel-icon">▲</span>
+                    </div>
+                    <p class="upload-text">点击或拖拽上传图片</p>
+                    <p class="upload-hint">支持 JPG / PNG / GIF / WEBP</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                </div>
+            </section>
+
+            <!-- 预览和控制区域 -->
+            <section class="workspace" id="workspace" style="display: none;">
+                <!-- 原图预览 -->
+                <div class="preview-panel pixel-border">
+                    <div class="panel-header">
+                        <span class="panel-title">◄ 原图 ►</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="originalCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- 像素化预览 -->
+                <div class="preview-panel pixel-border main-preview">
+                    <div class="panel-header">
+                        <span class="panel-title">◄ 像素动画 ►</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="pixelCanvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- 控制面板 -->
+                <div class="control-panel pixel-border">
+                    <div class="panel-header">
+                        <span class="panel-title">◄ 控制面板 ►</span>
+                    </div>
+                    
+                    <div class="controls">
+                        <!-- 像素大小控制 -->
+                        <div class="control-group">
+                            <label class="control-label">像素块大小</label>
+                            <div class="slider-container">
+                                <input type="range" id="pixelSize" min="4" max="32" value="8" class="pixel-slider">
+                                <span class="slider-value" id="pixelSizeValue">8px</span>
+                            </div>
+                        </div>
+
+                        <!-- 动画效果选择 -->
+                        <div class="control-group">
+                            <label class="control-label">动画效果</label>
+                            <div class="effect-buttons">
+                                <button class="effect-btn active" data-effect="glitch">
+                                    <span class="btn-icon">⚡</span>
+                                    <span class="btn-text">抖动</span>
+                                </button>
+                                <button class="effect-btn" data-effect="float">
+                                    <span class="btn-icon">☁</span>
+                                    <span class="btn-text">浮动</span>
+                                </button>
+                                <button class="effect-btn" data-effect="sparkle">
+                                    <span class="btn-icon">✦</span>
+                                    <span class="btn-text">闪烁</span>
+                                </button>
+                                <button class="effect-btn" data-effect="wave">
+                                    <span class="btn-icon">≋</span>
+                                    <span class="btn-text">波浪</span>
+                                </button>
+                                <button class="effect-btn" data-effect="rainbow">
+                                    <span class="btn-icon">🌈</span>
+                                    <span class="btn-text">彩虹</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 动画强度 -->
+                        <div class="control-group">
+                            <label class="control-label">动画强度</label>
+                            <div class="slider-container">
+                                <input type="range" id="effectIntensity" min="1" max="10" value="5" class="pixel-slider">
+                                <span class="slider-value" id="intensityValue">5</span>
+                            </div>
+                        </div>
+
+                        <!-- 动画速度 -->
+                        <div class="control-group">
+                            <label class="control-label">动画速度</label>
+                            <div class="slider-container">
+                                <input type="range" id="animationSpeed" min="1" max="10" value="5" class="pixel-slider">
+                                <span class="slider-value" id="speedValue">5</span>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="action-buttons">
+                            <button class="pixel-btn btn-secondary" id="resetBtn">
+                                <span>↺ 重置</span>
+                            </button>
+                            <button class="pixel-btn btn-primary" id="exportBtn">
+                                <span>⬇ 导出GIF</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 导出进度弹窗 -->
+        <div class="modal" id="exportModal" style="display: none;">
+            <div class="modal-content pixel-border">
+                <div class="modal-header">
+                    <span class="panel-title">◄ 生成中 ►</span>
+                </div>
+                <div class="modal-body">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">正在生成GIF... 0%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>PRESS START TO PIXEL</p>
+            <p class="footer-hint">© 2024 PixelPulse - 用像素点亮创意</p>
+        </footer>
+    </div>
+
+    <!-- gif.js 库 (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    
+    <!-- 应用脚本 -->
+    <script src="js/pixelate.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/gif-export.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
