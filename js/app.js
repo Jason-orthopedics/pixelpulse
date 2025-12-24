@@ -30,6 +30,7 @@
         speedValue: null,
         resetBtn: null,
         exportBtn: null,
+        exportImageBtn: null,
         exportModal: null,
         progressFill: null,
         progressText: null,
@@ -73,6 +74,7 @@
         elements.speedValue = document.getElementById('speedValue');
         elements.resetBtn = document.getElementById('resetBtn');
         elements.exportBtn = document.getElementById('exportBtn');
+        elements.exportImageBtn = document.getElementById('exportImageBtn');
         elements.exportModal = document.getElementById('exportModal');
         elements.progressFill = document.getElementById('progressFill');
         elements.progressText = document.getElementById('progressText');
@@ -137,8 +139,11 @@
         // 重置按钮
         elements.resetBtn.addEventListener('click', handleReset);
 
-        // 导出按钮
+        // 导出GIF按钮
         elements.exportBtn.addEventListener('click', handleExport);
+
+        // 导出图片按钮
+        elements.exportImageBtn.addEventListener('click', handleExportImage);
     }
 
     /**
@@ -401,6 +406,32 @@
     function updateProgress(percent, message) {
         elements.progressFill.style.width = percent + '%';
         elements.progressText.textContent = message + ' ' + percent + '%';
+    }
+
+    /**
+     * 处理导出静态图片
+     */
+    function handleExportImage() {
+        if (!app.isImageLoaded) return;
+
+        const canvas = elements.pixelCanvas;
+        const effect = getActiveEffect();
+        const timestamp = Date.now().toString(36);
+        const filename = `pixelpulse-${effect}-${timestamp}.png`;
+
+        // 将当前画布内容转换为PNG并下载
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 延迟释放URL
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }, 'image/png');
     }
 
     /**

@@ -141,6 +141,9 @@ class AnimationEngine {
         
         // 根据效果类型渲染
         switch (this.currentEffect) {
+            case 'none':
+                this.renderStatic(ctx, pixelSize, gridSize);
+                break;
             case 'glitch':
                 this.renderGlitch(ctx, pixelSize, gridSize);
                 break;

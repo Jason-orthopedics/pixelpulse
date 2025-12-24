@@ -465,8 +465,14 @@ body {
    ======================================== */
 .action-buttons {
     display: flex;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-top: 10px;
+}
+
+.action-buttons .pixel-btn {
+    flex: 1;
+    min-width: 120px;
 }
 
 .pixel-btn {
@@ -527,6 +533,23 @@ body {
     box-shadow: 
         2px 2px 0 var(--bg-darker),
         0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+.btn-tertiary {
+    background: var(--panel-bg);
+    color: var(--neon-yellow);
+    border: 2px solid var(--neon-yellow);
+    box-shadow: 
+        4px 4px 0 var(--bg-darker),
+        0 0 10px rgba(255, 204, 0, 0.2);
+}
+
+.btn-tertiary:hover {
+    background: rgba(255, 204, 0, 0.2);
+    transform: translate(2px, 2px);
+    box-shadow: 
+        2px 2px 0 var(--bg-darker),
+        0 0 20px rgba(255, 204, 0, 0.4);
 }
 
 /* ========================================
